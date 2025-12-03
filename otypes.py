@@ -70,8 +70,13 @@ class ostr(metaclass=_.abc.ABCMeta):
                 if len(slashes)%2==1:return slashes[:-1]+old
                 else:return slashes+new
             return type(s)(_.re.compile(rf'(\\*){_.re.escape(old)}').sub(repl,s))
-            
-        def __gt__(s,o={}):print(type(s)(o['self']).escape_aware_replace('%s',s)if'self'in o else(type(s)(o[0]).escape_aware_replace('%s',s)if 0 in o else s),sep=o['sep']if'sep'in o else' ',end=o['end']if'end'in o else'\n',flush=o['flush']if'flush'in o else False,file=o['file']if'file'in o else _.sys.stdout);return s
+        def __gt__(s,o=None):
+            if o is None:o={}
+            if isinstance(o,(list,tuple)):o={0:type(s)(' '.join(str(i)for i in o)).escape_aware_replace('%s',s)if len(o)>0 else s}
+            elif isinstance(o,dict):o[0]=type(s)(o[0]).escape_aware_replace('%s',s)if 0 in o else type(s)(o['self']).escape_aware_replace('%s',s)if'self'in o else s
+            else:o={0:str(type(s)(o).escape_aware_replace('%s',s))}
+            print(type(s)(o[0]),sep=o['sep']if'sep'in o else' ',end=o['end']if'end'in o else'\n',flush=o['flush']if'flush'in o else False,file=o['file']if'file'in o else _.sys.stdout)
+            return s
         snake=property(lambda s:type(s)((lambda t:t if t not in{"con","prn","aux","nul"}else f"{t}_")(_.re.sub(r"_+","_",_.re.sub(r"[^\w]+","_",_.unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode().strip().lower()),).strip("_")[:255]or"unnamed")))
         def similarity(s,string):
             """Kinda sucks but tbh, Idc"""
@@ -115,4 +120,4 @@ if __name__=='__main__':
 	print(x.reverse,type(x.reverse))
 	print(ostr.ostr,isinstance(x,ostr))
 	print(x.len,x.length,x.join(['A','B','C']))
-	name=ostr(input('What is your name? ').capitalize())>{0:'Welcome %s!'}
+	name=ostr(input('What is your name? ').capitalize())>'Welcome %s!'
