@@ -85,8 +85,14 @@ class ostr(metaclass=_.abc.ABCMeta):
                         return cls(r)if isinstance(r,str)else r
                     return method
                 setattr(cls,name,make_wrapper(attr))
+    @staticmethod
+    def methods():
+        """Return dict of attribute name -> attribute for the concrete inner type."""
+        return {name:value for name,value in _.inspect.getmembers(ostr.ostr)}
     method=staticmethod(lambda name=None,func=None,*,prop=False:(lambda f:(setattr(ostr.ostr,name or f.__name__,property(f)if prop else f)or f))if func is None else(setattr(ostr.ostr,name,property(func)if prop else func)))
     ostr._BIND_STR_METHODS()
+    maketrans=staticmethod(lambda x,y=None,z='':str.maketrans(x,y,z))
+ostr.register(ostr.ostr)
 
 if __name__=='__main__':
 	x=ostr('Hello', 'world')
@@ -97,3 +103,4 @@ if __name__=='__main__':
 	print(x*2,type(x*2))
 	print(x.snake,type(x.snake))
 	print(x.reverse,type(x.reverse))
+	print(ostr.ostr,isinstance(x,ostr))
