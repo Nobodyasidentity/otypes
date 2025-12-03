@@ -71,7 +71,7 @@ class ostr(metaclass=_.abc.ABCMeta):
                 else:return slashes+new
             return type(s)(_.re.compile(rf'(\\*){_.re.escape(old)}').sub(repl,s))
             
-        def __lt__(s,o={}):print(type(s)(o['self']).escape_aware_replace('%s',s)if'self'in o else(type(s)(o[0]).escape_aware_replace('%s',s)if 0 in o else s),sep=o['sep']if'sep'in o else' ',end=o['end']if'end'in o else'\n',flush=o['flush']if'flush'in o else False,file=o['file']if'file'in o else _.sys.stdout);return s
+        def __gt__(s,o={}):print(type(s)(o['self']).escape_aware_replace('%s',s)if'self'in o else(type(s)(o[0]).escape_aware_replace('%s',s)if 0 in o else s),sep=o['sep']if'sep'in o else' ',end=o['end']if'end'in o else'\n',flush=o['flush']if'flush'in o else False,file=o['file']if'file'in o else _.sys.stdout);return s
         snake=property(lambda s:type(s)((lambda t:t if t not in{"con","prn","aux","nul"}else f"{t}_")(_.re.sub(r"_+","_",_.re.sub(r"[^\w]+","_",_.unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode().strip().lower()),).strip("_")[:255]or"unnamed")))
         def similarity(s,string):
             """Kinda sucks but tbh, Idc"""
@@ -115,4 +115,4 @@ if __name__=='__main__':
 	print(x.reverse,type(x.reverse))
 	print(ostr.ostr,isinstance(x,ostr))
 	print(x.len,x.length,x.join(['A','B','C']))
-	name=ostr(input('What is your name? ').capitalize())<{0:'Welcome %s!'}
+	name=ostr(input('What is your name? ').capitalize())>{0:'Welcome %s!'}
