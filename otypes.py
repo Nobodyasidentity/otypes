@@ -1,5 +1,5 @@
 class _:
-	import abc,pickle,inspect,re,math,unicodedata,os
+	import abc,pickle,inspect,re,math,unicodedata,os,sys
 	from collections import Counter
 	from typing import Iterable,Mapping,Optional,Type,TypeVar,Dict
 def oinput(*s,sep=' ',type=str,Error="'{}' is not valid",Exit=None,Exit_code=None):
@@ -16,10 +16,10 @@ class ostr(metaclass=_.abc.ABCMeta):
         """Concrete str subclass created by the factory."""
         __name__=__qualname__="ostr";__slots__=()
         def __new__(cls,value:object):return super().__new__(cls,str(value))
-        def __invert__(self):return super()
+        def __invert__(self):return self
         def __neg__(self):return type(self)(self[::-1])
         def __add__(self,other:object):return type(self)(str.__add__(self,str(other)))
-        def __radd__(self,other:object):return type(self)(str(other)+str(self))
+        def __radd__(self,other:object):return type(self)(str.__add__(str(other),self))
         def __sub__(self,other:str):return type(self)(str(self).replace(str(other),""))
         def __mul__(self,n:int):return type(self)(str.__mul__(self,n))
         def __rmul__(self,n:int):return type(self)(str.__mul__(self,n))
@@ -63,6 +63,15 @@ class ostr(metaclass=_.abc.ABCMeta):
                 return type(self)(s[:key]+str(value)+s[key+1:])
             return type(self)(s)
         def __reduce__(self):return(ostr.ostr,(str(self),))
+        def escape_aware_replace(s,old=None,new=''):
+            if old is None:return s
+            def repl(match):
+                slashes=match.group(1)
+                if len(slashes)%2==1:return slashes[:-1]+old
+                else:return slashes+new
+            return type(s)(_.re.compile(rf'(\\*){_.re.escape(old)}').sub(repl,s))
+            
+        def __lt__(s,o={}):print(type(s)(o['self']).escape_aware_replace('%s',s)if'self'in o else(type(s)(o[0]).escape_aware_replace('%s',s)if 0 in o else s),sep=o['sep']if'sep'in o else' ',end=o['end']if'end'in o else'\n',flush=o['flush']if'flush'in o else False,file=o['file']if'file'in o else _.sys.stdout);return s
         snake=property(lambda s:type(s)((lambda t:t if t not in{"con","prn","aux","nul"}else f"{t}_")(_.re.sub(r"_+","_",_.re.sub(r"[^\w]+","_",_.unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode().strip().lower()),).strip("_")[:255]or"unnamed")))
         def similarity(s,string):
             """Kinda sucks but tbh, Idc"""
@@ -72,6 +81,7 @@ class ostr(metaclass=_.abc.ABCMeta):
             na=_.math.sqrt(sum(v*v for v in a.values()))
             nb=_.math.sqrt(sum(v*v for v in b.values()))
             return dot/(na*nb)if na and nb else 0
+        len,length,uwu=property(lambda*_:len(_[0])),property(lambda*_:_[0].len),(lambda s:type(s)(s.translate(str.maketrans('rlRL','wwWW'))+[' owo',' uwu',' <3',' :3'][hash(s)%4]))
         _SAFE_SKIP={"__class__","__new__","__init__","__del__","__getattribute__","__getattr__","__setattr__","__delattr__","__dict__","__mro__","__subclasshook__","__init_subclass__","__weakref__","__slots__","__sizeof__","__reduce__","__reduce_ex__"}
         @classmethod
         def _BIND_STR_METHODS(cls):
@@ -104,3 +114,5 @@ if __name__=='__main__':
 	print(x.snake,type(x.snake))
 	print(x.reverse,type(x.reverse))
 	print(ostr.ostr,isinstance(x,ostr))
+	print(x.len,x.length,x.join(['A','B','C']))
+	name=ostr(input('What is your name? ').capitalize())<{0:'Welcome %s!'}
