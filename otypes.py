@@ -2,6 +2,12 @@ class _:
 	import abc,pickle,inspect,re,math,unicodedata,os
 	from collections import Counter
 	from typing import Iterable,Mapping,Optional,Type,TypeVar,Dict
+def oinput(*s,sep=' ',type=str,Error="'{}' is not valid",Exit=None,Exit_code=None):
+    while 1:
+        user_input=input(sep.join(str(i)for i in s))
+        if user_input==Exit:return Exit_code
+        try:return type(user_input)
+        except(ValueError,TypeError):print(Error.format(user_input))
 class ostr(metaclass=_.abc.ABCMeta):
     T=_.TypeVar("T",bound="ostr")
     """Factory and abstract type for the concrete nested str subclass."""
@@ -10,7 +16,7 @@ class ostr(metaclass=_.abc.ABCMeta):
         """Concrete str subclass created by the factory."""
         __name__=__qualname__="ostr";__slots__=()
         def __new__(cls,value:object):return super().__new__(cls,str(value))
-        def __invert__(self):return type(self)(self.snake)
+        def __invert__(self):return super()
         def __neg__(self):return type(self)(self[::-1])
         def __add__(self,other:object):return type(self)(str.__add__(self,str(other)))
         def __radd__(self,other:object):return type(self)(str(other)+str(self))
