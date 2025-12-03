@@ -5,16 +5,12 @@ class _:
 class ostr(metaclass=_.abc.ABCMeta):
     T=_.TypeVar("T",bound="ostr")
     """Factory and abstract type for the concrete nested str subclass."""
-    def __new__(cls: _.Type[T],*parts:object,sep: _.Optional[str]=" ")->"ostr.ostr":
-        if len(parts)==1 and isinstance(parts[0],(list,tuple)):parts_iter=parts[0]
-        else:parts_iter=parts
-        if sep is None:sep=""
-        return getattr(cls,"ostr")(sep.join(str(p)for p in parts_iter))
+    def __new__(cls:_.Type[T],*parts:object,sep:_.Optional[str]=" ")->"ostr.ostr":return getattr(cls,"ostr")((''if sep is None else sep).join(str(p)for p in(parts[0] if len(parts)==1 and isinstance(parts[0],(list,tuple))else parts)))
     class ostr(str):
         """Concrete str subclass created by the factory."""
         __name__=__qualname__="ostr";__slots__=()
         def __new__(cls,value:object):return super().__new__(cls,str(value))
-        def __invert__(self):return super()
+        def __invert__(self):return type(self)(self.snake)
         def __neg__(self):return type(self)(self[::-1])
         def __add__(self,other:object):return type(self)(str.__add__(self,str(other)))
         def __radd__(self,other:object):return type(self)(str(other)+str(self))
