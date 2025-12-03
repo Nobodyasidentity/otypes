@@ -5,10 +5,10 @@ class _:
 	class ometa(abc.ABCMeta):
 	    def __sub__(s,*_,**k):return o.__new__(s,*_,**k)
 	    def __rsub__(s,*_,**k):return o.__new__(s,*_,**k)
-	def ometais(i,t):return isinstance(i,(t))or issubclass(i,(t))
+	def ometais(i,t):return(isinstance(i,t)or issubclass(i,t))if _.inspect.isclass(i)else(isinstance(type(i),t)or issubclass(type(i),t))
 	class otypesmeta(abc.ABCMeta):
-	    def __sub__(cls, value):return cls(value)
-	    def __rsub__(cls, value):return cls(value)
+	    def __sub__(cls,value):return cls(value)
+	    def __rsub__(cls,value):return cls(value)
 def oinput(*s,sep=' ',type=str,Error="'{}' is not valid",Exit=None,Exit_code=None):
     while 1:
         user_input=input(sep.join(str(i)for i in s))
@@ -83,6 +83,7 @@ class ostr(metaclass=_.otypesmeta):
                 else:return slashes+new
             return type(s)(_.re.compile(rf'(\\*){_.re.escape(old)}').sub(repl,s))
         def __gt__(self,o=None):
+            """print... but worse..."""
             s=type(self)(self)
             if o is None:o={0:s}
             if isinstance(o,(list,tuple)):o={0:type(s)(' '.join(str(i)for i in o)).escape_aware_replace('%s',s)if len(o)>0 else s}
@@ -124,6 +125,7 @@ class ostr(metaclass=_.otypesmeta):
     maketrans=staticmethod(lambda x,y=None,z='':str.maketrans(x,y,z))
 ostr.register(ostr.ostr)
 class o(metaclass=_.ometa):
-    def __new__(s,*args,**kwargs):
+    """automatically turn normal data-types into their otypes counterpart"""
+    def __new__(cls,*args,**kwargs):
         if _.ometais(args[0],(str,ostr.ostr)):return ostr(*args,**kwargs)
         else:return args[0]
