@@ -2,17 +2,20 @@ class _:
 	import abc,pickle,inspect,re,math,unicodedata,os,sys
 	from collections import Counter
 	from typing import Iterable,Mapping,Optional,Type,TypeVar,Dict
-	class o(abc.ABCMeta):
+	class ometa(abc.ABCMeta):
 	    def __sub__(s,*_,**k):return o.__new__(s,*_,**k)
-	class ostr(abc.ABCMeta):
-	    def __sub__(s,*_,**k):return ostr.__new__(s,*_,**k)
+	    def __rsub__(s,*_,**k):return o.__new__(s,*_,**k)
+	def ometais(i,t):return isinstance(i,(t))or issubclass(i,(t))
+	class otypesmeta(abc.ABCMeta):
+	    def __sub__(cls, value):return cls(value)
+	    def __rsub__(cls, value):return cls(value)
 def oinput(*s,sep=' ',type=str,Error="'{}' is not valid",Exit=None,Exit_code=None):
     while 1:
         user_input=input(sep.join(str(i)for i in s))
         if user_input==Exit:return Exit_code
         try:return type(user_input)
         except(ValueError,TypeError):print(Error.format(user_input))
-class ostr(metaclass=_.ostr):
+class ostr(metaclass=_.otypesmeta):
     T=_.TypeVar("T",bound="ostr")
     """Factory and abstract type for the concrete nested str subclass."""
     def __new__(cls:_.Type[T],*parts:object,sep:_.Optional[str]=" ")->"ostr.ostr":return getattr(cls,"ostr")((''if sep is None else sep).join(str(p)for p in(parts[0] if len(parts)==1 and isinstance(parts[0],(list,tuple))else parts)))
@@ -120,7 +123,7 @@ class ostr(metaclass=_.ostr):
     ostr._BIND_STR_METHODS()
     maketrans=staticmethod(lambda x,y=None,z='':str.maketrans(x,y,z))
 ostr.register(ostr.ostr)
-class o(metaclass=_.o):
+class o(metaclass=_.ometa):
     def __new__(s,*args,**kwargs):
-        if isinstance(args[0],(str,ostr.ostr))or issubclass(args[0],(str,ostr.ostr)):return ostr(s,*args,**kwargs)
+        if _.ometais(args[0],(str,ostr.ostr)):return ostr(*args,**kwargs)
         else:return args[0]
