@@ -45,7 +45,7 @@ print(type(o-"Hello")) # <class 'otypes.ostr'>
 ```  
 `o.casting = dict({})`: A dict with the instructions on how `o()` should cast data types. Recommended to leave alone.  
   
-`o.iscls(object ,class: class|tuple) -> bool`: Returns a boolean for if an object is the specified class or a subclass of the specified class.  
+`o.iscls(object ,class: class|tuple) -> bool`: Returns a boolean for if an object is the specified class or a subclass of the specified class. (Used by `o()` for auto-casting).  
 ```py
 # Example
 x = ostr("Hello")
