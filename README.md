@@ -8,7 +8,7 @@ o('This hurts my eyes')>()
 
 ```  
 ## docs  
-`@otype`: My custom data type creator. takes a subclass and returns a `ometa class`.  
+`@otype`: Custom data type creator. takes a subclass and returns a `ometa` class.  
 ```py
 # Example:
 @otype
