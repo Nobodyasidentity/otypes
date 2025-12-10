@@ -93,4 +93,5 @@ def reverse(self):
 
 print(x.indexof('e')) # 1
 print(x.reverse) # "olleH"
+```
 ### }  
