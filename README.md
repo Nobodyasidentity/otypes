@@ -78,5 +78,19 @@ print(x.uwu()) # "Hewwo Wowwd"
 print(~x) # <class 'otypes.ostr'>
 print(x.escape_aware_replace('l','w')) # "Hewwo Worwd"
 x>{0:"Message: %s"} # "Message: Hello World"
-```  
+```
+```py
+@ostr.method
+def indexof(self, item):
+  return list(self).index(item)
+
+x = o-"Hello"
+
+@ostr.method
+@property
+def reverse(self):
+  return -self
+
+print(x.indexof('e')) # 1
+print(x.reverse) # "olleH"
 ### }  
