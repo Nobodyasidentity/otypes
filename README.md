@@ -7,3 +7,16 @@ o('This hurts my eyes')>()
 "Please send help"-o>'%s'
 
 ```  
+## docs  
+`@otype`: My custom data type creator. takes a subclass and returns a `ometa class`.  
+```py
+# Example:
+@otype
+class MyInt(int):
+  def MyFunc(self):
+    return self * 2
+
+x = o-10
+print(type(x)) # <class '__main__.MyInt'>
+print(x.MyFunc()) # 20
+```
