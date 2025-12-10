@@ -54,7 +54,7 @@ print(o.iscls(x, int)) # False
 ### }  
 `oinput(*s, sep=' ', type=str, Error="'{}' is not valid", Exit=None, Exit_code=None)`: Custom input method that lets you specify what data type to return the input as (default: `str`).  
 ### `str` subclass: `ostr` {  
-I'm too lazy to finnish this rn <3
+I'm too lazy to finnish this <3  
 ```py
 from otypes import *
 
