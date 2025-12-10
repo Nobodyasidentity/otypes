@@ -18,4 +18,17 @@ class MyInt(int):
 x = o-10
 print(type(x)) # <class '__main__.MyInt'>
 print(x.MyFunc()) # 20
+```  
+`._BIND_METHODS(cls, source=None, wrap=None, dunder=False)`: (Experimental) Automatically makes all builtin methods of a subclass return the subclass instead of the super class.
+```py
+# Example:
+@otype
+class MyInt(int):pass
+
+MyInt._BIND_METHODS(dunder=True)
+
+x = o-10
+
+print(type(x)) # <class '__main__.MyInt'>
+print(type(x*2)) # <class '__main__.MyInt'>  
 ```
