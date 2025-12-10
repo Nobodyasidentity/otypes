@@ -49,4 +49,28 @@ print(type(o-"Hello")) # <class 'otypes.ostr'>
 `oinput(*s, sep=' ', type=str, Error="'{}' is not valid", Exit=None, Exit_code=None)`: Custom input method that lets you specify what data type to return the input as (default: `str`).  
 ### subclass `ostr` {  
 I'm too lazy to finnish this rn <3
+```py
+from otypes import *
+
+x = ostr("Hello World")
+
+print(x) # "Hello World"
+print(-x) # "dlroW olleH"
+print(x+'!!!') # "Hello World!!!"
+print(x-'l') # "Heo Word"
+print(x*2) # "Hello WorldHello World"
+print(x<<1) # "ello WorldH"
+print(x>>1) # "dHello Worl"
+print(type(x.cast(str))) # <class 'str'>
+print(x[0]) # "H"
+print(o("Hello %s")%"World") # "Hello World"
+print(x//{'l':'w'}) # "Hewwo Worwd"
+print(x.pipe(str.upper)) # "HELLO WORLD"
+print(x.len, x.length) # 11 11
+print(x.snake()) # "hello_world"
+print(x.uwu()) # "Hewwo Wowwd"
+print(~x) # <class 'otypes.ostr'>
+print(x.escape_aware_replace('l','w')) # "Hewwo Worwd"
+x>{0:"Message: %s"} # "Message: Hello World"
+```  
 ### }  
