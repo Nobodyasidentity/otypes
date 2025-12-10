@@ -1,5 +1,4 @@
-Imma add stuff soon  
-I'm just a little lazy :3  
+Don't excpect quality from me :3
 ```py
 from otypes import*
 
