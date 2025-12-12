@@ -52,7 +52,7 @@ x = ostr("Hello")
 print(o.iscls(x, ostr)) # True
 print(o.iscls(x, int)) # False
 ```
-###   class `attach` {
+###  > class `attach` {
 > `o.attach.method`: a property that returns a classmethod useful for letting users add their own functions to an `ometa` class
 ```py
  @otype
@@ -66,7 +66,7 @@ def reverse(self):
 x=o-10
 print(x.reverse())
 ```
-###   }
+###  > }
 ### }  
 `oinput(*s, sep=' ', type=str, Error="'{}' is not valid", Exit=None, Exit_code=None)`: Custom input method that lets you specify what data type to return the input as (default: `str`).  
 ### `str` subclass: `ostr` {  
