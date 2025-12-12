@@ -72,7 +72,7 @@ def reverse(self):
 x=o-10
 print(x.reverse())
 ```
-In the `ostr` subclass the `add_method` method is called `@ostr.method`.
+> In the `ostr` subclass the `add_method` method is called `@ostr.method`.
 > ### }
 ### }  
 `oinput(*s, sep=' ', type=str, Error="'{}' is not valid", Exit=None, Exit_code=None)`: Custom input method that lets you specify what data type to return the input as (default: `str`).  
