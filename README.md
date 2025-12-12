@@ -5,6 +5,11 @@ from otypes import*
 o('This hurts my eyes')>()
 "Please send help"-o>'%s'
 
+```
+```py
+@otype
+class myint(int):method=o.attach.method
+myint._BIND_METHODS(dunder=True)
 ```  
 ## docs  
 `@otype`: Custom data type creator. Takes a subclass and returns an `ometa` class.  
@@ -55,6 +60,7 @@ print(o.iscls(x, int)) # False
 > ###  class `attach` {
 > `o.attach.method`: a property that returns a classmethod useful for letting users add their own functions to an `ometa` class.
 ```py
+# Example:
  @otype
 class myint(int):
     add_method = o.attach.method
