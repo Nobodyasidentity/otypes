@@ -49,6 +49,17 @@ class o(metaclass=ometa):
         for i in cls.casting:
             if cls.iscls(args[0],(i,cls.casting[i])):return cls.casting[i](*args,**kwargs)
         return args[0]if len(args)==1 else args
+    class _attach:
+        @property
+        def method(*_):
+            @classmethod
+            def add_method(cls,f):
+                if isinstance(f,property)or issubclass(type(f),property):name=f.fget.__name__
+                elif isinstance(f,(classmethod,staticmethod))or issubclass(type(f),(classmethod,staticmethod)):name=f.__func__.__name__
+                else:name=f.__name__
+                setattr(cls,name,f);return f
+            return add_method
+    attach=_attach()
 def oinput(*s,sep=' ',type=str,Error="'{}' is not valid",Exit=None,Exit_code=None):
     while 1:
         user_input=input(sep.join(str(i)for i in s))
@@ -58,12 +69,7 @@ def oinput(*s,sep=' ',type=str,Error="'{}' is not valid",Exit=None,Exit_code=Non
 @otype
 class ostr(str,metaclass=ometa):
     def __new__(cls,*s,sep=' '):return str.__new__(cls,sep.join(str(a)for a in s))
-    @classmethod
-    def method(cls,f):
-        if isinstance(f,property)or issubclass(type(f),property):name=f.fget.__name__
-        elif isinstance(f,(classmethod,staticmethod))or issubclass(type(f),(classmethod,staticmethod)):name=f.__func__.__name__
-        else:name=f.__name__
-        setattr(cls,name,f);return f
+    method=o.attach.method
     def __neg__(self):return type(self)(self[::-1])
     def __add__(self,other:object):return type(self)(str.__add__(self,str(other)))
     def __radd__(self,other:object):return type(self)(str.__add__(str(other),self))
