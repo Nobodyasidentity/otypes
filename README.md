@@ -118,3 +118,6 @@ print(x.indexof('e')) # 1
 print(x.reverse) # "olleH"
 ```
 ### }  
+### `dict` subclass: `odict` {  
+`odict.lock(*names)`: Man I'm tired, sorry no documentation for this.  
+### }  
