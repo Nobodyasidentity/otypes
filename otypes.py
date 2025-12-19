@@ -1,5 +1,5 @@
 class _:
-    import abc,pickle,inspect,re,math,unicodedata,os,sys
+    import abc,pickle,inspect,re,math,unicodedata,os,sys,json
     from collections import Counter
     from functools import wraps
     SAFE={"__class__","__new__","__init__","__del__","__getattribute__","__getattr__","__setattr__","__delattr__","__dict__","__mro__","__subclasshook__","__init_subclass__","__weakref__","__slots__","__sizeof__","__reduce__","__reduce_ex__"}
@@ -128,3 +128,57 @@ class ostr(str,metaclass=ometa):
     snake,uwu=(lambda s:type(s)((lambda t:t if t not in{"con","prn","aux","nul"}else f"{t}_")(_.re.sub(r"_+","_",_.re.sub(r"[^\w]+","_",_.unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode().strip().lower()),).strip("_")[:255]or"unnamed"))),(lambda s:type(s)(s.translate(str.maketrans('rlRL','wwWW'))+[' owo',' uwu',' <3',' :3'][hash(s)%4]))
     def __invert__(s):return type(s)
 ostr._BIND_METHODS(dunder=1)
+@otype
+class odict(dict):
+    _protected=set(dir(dict))|set(dir(object))
+    def __init__(self,*args,**kwargs):
+        dict.__init__(self,*args,**kwargs)
+        object.__setattr__(self,"_locked",set())
+        object.__setattr__(self,"_hooks",{})
+        for k, v in self.items():
+            if self._is_attr(k):self.__dict__[k]=v
+    def _is_attr(self, key):return(isinstance(key,str)and key.isidentifier()and key not in self._protected)
+    def _trigger(self, key, old, new):
+        for cb in self._hooks.get(key, ()):cb(old,new)
+    def __getattr__(self, name):
+        try:return self[name]
+        except KeyError:raise AttributeError(name) from None
+    def __setattr__(self, name, value):
+        if name.startswith("_"):object.__setattr__(self,name,value);return
+        if name in self._protected:raise AttributeError(f"'{name}' is protected")
+        if name in self._locked:raise AttributeError(f"'{name}' is locked")
+        old=self.get(name,None)
+        self[name]=value
+        self.__dict__[name]=value
+        self._trigger(name,old,value)
+    def __delattr__(self, name):
+        if name in self._locked:raise AttributeError(f"'{name}' is locked")
+        if name in self:
+            old=self[name]
+            del self[name]
+            self.__dict__.pop(name, None)
+            self._trigger(name, old, None)
+        else:object.__delattr__(self, name)
+    def __setitem__(self, key, value):
+        if key in self._locked:raise KeyError(f"'{key}' is locked")
+        old=self.get(key, None)
+        dict.__setitem__(self,key, value)
+        if self._is_attr(key):
+            self.__dict__[key]=value
+            self._trigger(key,old,value)
+    def __delitem__(self,key):
+        if key in self._locked:raise KeyError(f"'{key}' is locked")
+        old=self[key]
+        dict.__delitem__(self,key)
+        self.__dict__.pop(key,None)
+        self._trigger(key,old,None)
+    def lock(self,*names):
+        for name in names:
+            if name in self:self._locked.add(name)
+    def unlock(self,*names):
+        for name in names:self._locked.discard(name)
+    def on(self,key,callback):self._hooks.setdefault(key, []).append(callback)
+    @classmethod
+    def from_json(cls,s):return cls(_.json.loads(s))
+    def to_json(self,**kwargs):return _.json.dumps(self, **kwargs)
+odict._BIND_METHODS(dunder=1)
