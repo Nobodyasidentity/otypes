@@ -119,5 +119,13 @@ print(x.reverse) # "olleH"
 ```
 ### }  
 ### `dict` subclass: `odict` {  
-`odict.lock(*names)`: Man I'm tired, sorry no documentation for this.  
+```py
+from otypes import *
+
+x = o-{"hp":3}
+
+print(x.hp) # 3
+x.hp += 1
+print(x['hp']) # 4
+```
 ### }  
