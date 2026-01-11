@@ -97,10 +97,9 @@ class ostr(str,metaclass=ometa):
     def join(self,it):return type(self)(str.join(self,(str(i)for i in it)))
     def format(self,*a,**k):return type(self)(str.format(self,*a,**k))
     def format_map(self,m):return type(self)(str.format_map(self,m))
-    def __floordiv__(self,replace_map):
-        s=str(self)
+    def __floordiv__(s,replace_map):
         for old,new in replace_map.items():s=s.escape_aware_replace(old,new)
-        return type(self)(s)
+        return s
     def pipe(self,*functions):
         if len(functions)==0:return self
         s=type(self)(self)
