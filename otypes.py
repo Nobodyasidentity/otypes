@@ -26,6 +26,35 @@ class _:
             setattr(cls,n,wrapfn(fn))
         setattr(cls,mark,True)
         return cls
+    class PointSlice:
+        __slots__=('s','a','b')
+        def __init__(self,s,a,b):self.s=s;self.a=max(0,a);self.b=min(len(s),b)
+        def _mid(self):return type(self.s)(self.s[self.a:self.b])
+        def _splice(self,r):return type(self.s)(self.s[:self.a]+r+self.s[self.b:])
+        def __repr__(self):return f"<{type(self).__name__} PointSlice '{self.s[self.a:self.b]}' of {type(self.s).__name__}({self.s})>"
+        def __getattribute__(self,n):
+            if n in{'s','a','b','_mid','_splice','__class__','__repr__'}:return object.__getattribute__(self,n)
+            T=type(self.s)
+            mid=self._mid()
+            attr=getattr(T,n)
+            if o.iscls(attr,property):return attr.__get__(mid,type(mid))
+            if callable(attr):
+                def m(*a,**k):r=attr(mid,*a,**k);return self._splice(r)if isinstance(r,T)else r
+                return m
+            return attr
+        def __binary(op):
+            def f(self,o):r=op(self._mid(),o);return self._splice(r)if isinstance(r,type(self.s))else r
+            return f
+    class PointsHelper:
+        __slots__=('s',)
+        def __init__(self,s):self.s=s
+        def __call__(self,a=0,b=None):return _.PointSlice(self.s,a,len(self.s)if b is None else b)
+        def __getitem__(self,sl):
+            if not isinstance(sl,slice):raise TypeError
+            return _.PointSlice(self.s,sl.start or 0,sl.stop or len(self.s))
+for _n in('__add__','__sub__','__mul__','__matmul__','__truediv__','__floordiv__','__mod__','__pow__','__lshift__','__rshift__','__and__','__xor__','__or__','__radd__','__rsub__','__rmul__','__rmatmul__','__rtruediv__','__rfloordiv__','__rmod__','__rpow__','__rlshift__','__rrshift__','__rand__','__rxor__','__ror__'):
+    try:setattr(_.PointSlice,_n,_.PointSlice._binary(getattr(type(''),_n)))
+    except:pass
 class ometa(type):
     def __new__(cls,*args,**kwargs):return super().__new__(cls,*args,**kwargs)
     __sub__=__rsub__=lambda c,v:c(v)
@@ -41,6 +70,10 @@ def otype(cls):
     new._BIND_METHODS=classmethod(_.BIND)
     o.casting[base]=new
     return new
+class OBoundHelper:
+    __slots__=('_s',)
+    def __init__(self,s):self._s=s
+    def _wrap(self,value):return type(self._s)(value)
 class o(metaclass=ometa):
     casting=dict({})
     def iscls(o,c):return(isinstance(o,c)or issubclass(type(o),c))
@@ -49,6 +82,11 @@ class o(metaclass=ometa):
         for i in cls.casting:
             if cls.iscls(args[0],(i,cls.casting[i])):return cls.casting[i](*args,**kwargs)
         return args[0]if len(args)==1 else args
+    def innerclass(helper_cls):
+        class Descriptor:
+            __slots__=()
+            def __get__(self,instance,owner):return helper_cls if instance is None else helper_cls(instance)
+        return Descriptor()
     class _attach:
         @property
         def method(*_):
@@ -59,6 +97,11 @@ class o(metaclass=ometa):
                 else:name=f.__name__
                 setattr(cls,name,f);return f
             return add_method
+        class regex(OBoundHelper):
+            def findall(self,*a,**k):return _.re.findall(*a,self._s,**k)
+            def search(self,*a,**k):return _.re.search(*a,self._s,**k)
+            def split(self,*a,**k):return _.re.split(*a,self._s,**k)
+            def sub(self,*a,**k):return self._wrap(_.re.sub(*a,self._s,**k))
     attach=_attach()
 def oinput(*s,sep=' ',type=str,Error="'{}' is not valid",Exit=None,Exit_code=None):
     while 1:
@@ -126,6 +169,8 @@ class ostr(str,metaclass=ometa):
         print(type(s)(o[0]),sep=o['sep']if'sep'in o else' ',end=o['end']if'end'in o else'\n',flush=o['flush']if'flush'in o else False,file=o['file']if'file'in o else _.sys.stdout);return self
     snake,uwu=(lambda s:type(s)((lambda t:t if t not in{"con","prn","aux","nul"}else f"{t}_")(_.re.sub(r"_+","_",_.re.sub(r"[^\w]+","_",_.unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode().strip().lower()),).strip("_")[:255]or"unnamed"))),(lambda s:type(s)(s.translate(str.maketrans('rlRL','wwWW'))+[' owo',' uwu',' <3',' :3'][hash(s)%4]))
     def __invert__(s):return type(s)
+    regex,points=o.innerclass(o.attach.regex),o.innerclass(_.PointsHelper)
+    def insert(self,s,pos):return self[:pos]+type(self)(s)+self[pos:]
 ostr._BIND_METHODS(dunder=1)
 @otype
 class odict(dict):
