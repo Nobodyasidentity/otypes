@@ -102,7 +102,7 @@ class o(metaclass=ometa):
             def search(self,*a,**k):return _.re.search(*a,self._s,**k)
             def split(self,*a,**k):return _.re.split(*a,self._s,**k)
             def sub(self,*a,**k):return self._wrap(_.re.sub(*a,self._s,**k))
-    attach=_attach()
+    attach=_attach();del _attach
 def oinput(*s,sep=' ',type=str,Error="'{}' is not valid",Exit=None,Exit_code=None):
     while 1:
         user_input=input(sep.join(str(i)for i in s))
