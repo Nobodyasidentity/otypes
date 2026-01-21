@@ -101,6 +101,7 @@ print(x.uwu()) # "Hewwo Wowwd"
 print(~x) # <class 'otypes.ostr'>
 print(x.escape_aware_replace('l','w')) # "Hewwo Worwd"
 x>{0:"Message: %s"} # "Message: Hello World"
+print(x.points(0,5).upper()) # "HELLO World"
 ```
 ```py
 @ostr.method
