@@ -31,7 +31,7 @@ class _:
         def __init__(self,s,a,b):self.s=s;self.a=max(0,a);self.b=min(len(s),b)
         def _mid(self):return type(self.s)(self.s[self.a:self.b])
         def _splice(self,r):return type(self.s)(self.s[:self.a]+r+self.s[self.b:])
-        def __repr__(self):return f"<{type(self).__name__} PointSlice '{self.s[self.a:self.b]}' of {type(self.s).__name__}({self.s})>"
+        def __repr__(self):return f"<{__name__} {type(self).__name__} '{self.s[self.a:self.b]}' of {type(self.s).__name__}({self.s})>"
         def __getattribute__(self,n):
             if n in{'s','a','b','_mid','_splice','__class__','__repr__'}:return object.__getattribute__(self,n)
             T=type(self.s)
