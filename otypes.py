@@ -129,11 +129,6 @@ class ostr(str,metaclass=ometa):
         if not s:return type(self)(s)
         n=int(n)%len(s)
         return type(self)(s[-n:]+s[:-n])
-    def cast(self,*types):
-        for t in types:
-            try:return t(self)
-            except Exception:continue
-        return self
     def __getitem__(self,key):r=str.__getitem__(self,key);return type(self)(r) if isinstance(r,str)else r
     def __mod__(self,other):return type(self)(str.__mod__(self,other))
     def __rmod__(self,other):return type(self)(str.__rmod__(self,other))
